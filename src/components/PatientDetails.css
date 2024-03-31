@@ -34,8 +34,7 @@
 
 .save-button,
 .delete-button,
-.add-button
-add_picture-button {
+.add-button {
   padding: 15px;
   border-radius: 5px;
   font-size: 16px;

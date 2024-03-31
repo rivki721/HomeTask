@@ -2,7 +2,7 @@ import React from "react";
 import "./Input.css";
 
 const Input = ({ label, value, type, onChange, name, placeholder, disabled }) => {
-  const newValue = type === "date" ? value.split("T")[0] : value;
+  const newValue = type === "date" ? value?.split("T")[0] : value;
 
   return (
     <div className="input-container">

@@ -9,7 +9,7 @@ const Card = ({ pickedPatientId, patient, onClick }) => {
   return (
     <button onClick={handleOnClick} className={`card-container ${pickedPatientId === patient.id && "current"}`}>
       <h2>
-        {patient.memberFirstName} {patient.memberLastName}
+        {patient.firstName} {patient.lastName}
       </h2>
       <p>ID: {patient.taz}</p>
     </button>

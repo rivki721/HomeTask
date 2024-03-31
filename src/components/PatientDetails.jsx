@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import Input from "./Input";
 import { createMember, deleteMember, getMemberById, updateMember } from "../api";
+import { validateMemberDetails } from "../validations";
 import "./PatientDetails.css";
 
 const newPatient = {
   taz: "",
-  memberFirstName: "",
-  memberLastName: "",
+  firstName: "",
+  lastName: "",
   city: "",
   street: "",
-  memberDob: "",
-  memberPhone: "",
-  memberMobilePhone: "",
-  gettingVaccinated: [],
+  dob: "",
+  phone: "",
+  mobilePhone: "",
+  vaccinations: [],
 };
 
 const PatientDetails = ({ patientId, getAllMembers }) => {
@@ -33,59 +34,15 @@ const PatientDetails = ({ patientId, getAllMembers }) => {
   }, [patientId]);
 
 
-//  func to check valid of phone
-  function isTel(s) {
-    if (s === "")
-        return true;
-
-    for (let i = 0; i < s.length; i++) {
-        if (s[i] < '0' || s[i] > '9')
-            return false;
-    }
-
-    if (s.indexOf('0') !== 0 || s.length !== 9)
-        return false;
-
-    return true;
-}
-
-//  func to check valid of Mphone
-function isPelepon(s) {
-    for (let i = 0; i < s.length; i++) {
-        if (s[i] < '0' || s[i] > '9')
-            return false;
-    }
-
-    if (s.indexOf('0') !== 0 || s.length !== 10)
-        return false;
-
-    return true;
-}
-//func to check valid of id
-function checkId(d) {
-  while (d.length < 9) {
-      d = "0" + d;
-  }
-
-  let s = 0, t;
-  for (let i = 0; i < d.length; i++) {
-      if (i % 2 === 0) {
-          s += parseInt(d[i]);
-      }
-      if (i % 2 !== 0) {
-          t = parseInt(d[i]) * 2;
-          if (t < 10)
-              s += t;
-          else
-              s += t % 10 + Math.floor(t / 10);
-      }
-  }
-
-  return s % 10 === 0;
-}
-
   const handleSavePatient = async () => {
     setError("");
+
+    const validation = validateMemberDetails(patientDetails);
+    if (validation) {
+      setError(validation);
+      return;
+    }
+
     try {
       if (patientId === null) {
         await createMember(patientDetails);
@@ -97,46 +54,10 @@ function checkId(d) {
     }
 
     await getAllMembers();
-    if (
-      !patientDetails.taz ||
-      !patientDetails.memberFirstName ||
-      !patientDetails.memberLastName ||
-      !patientDetails.city ||
-      !patientDetails.street ||
-      !patientDetails.memberDob ||
-      !patientDetails.memberPhone ||
-      !patientDetails.memberMobilePhone
-    )
-    {
-      setError("Please fill all fields");
-      return;
-    }
-     //check ID Validation
-     if(checkId(patientDetails.taz)==false)
-     {
-       setError("Illegal Taz");
-       return;
-     }
-
-     //check MobilePhone Validation
-     if(isPelepon(patientDetails.memberMobilePhone)==false)
-     {
-       setError("Illegal Mobile Phone number");
-       return;
-     }
-
-     //check Phone Validation
-     if(isTel(patientDetails.memberPhone)==false)
-     {
-       setError("Illegal Phone number");
-       return;
-     }
-
- 
   };
 
   const handleAddCovidDetails = () => {
-    setPatientDetails({ ...patientDetails, covidPatient: { sickDate: "", recoveryDate: "" } });
+    setPatientDetails({ ...patientDetails, covidMember: { sickDate: "", recoveryDate: "" } });
   };
 
   const handleDeletePatient = async () => {
@@ -152,14 +73,14 @@ function checkId(d) {
 
   const handleCovidFieldChange = (e) => {
     const { name, value } = e.target;
-    setPatientDetails({ ...patientDetails, covidPatient: { ...patientDetails.covidPatient, [name]: value } });
+    setPatientDetails({ ...patientDetails, covidMember: { ...patientDetails.covidMember, [name]: value } });
   };
 
   const handleAddVaccine = () => {
     setPatientDetails({
       ...patientDetails,
-      gettingVaccinated: [
-        ...patientDetails.gettingVaccinated,
+      vaccinations: [
+        ...patientDetails.vaccinations,
         {
           dateOfVaccination: "",
           vaccinationType: "",
@@ -170,27 +91,23 @@ function checkId(d) {
 
   const handleChangeVaccine = (e, index) => {
     const { name, value } = e.target;
-    const gettingVaccinated = patientDetails.gettingVaccinated.map((vaccine, i) => {
+    const vaccinations = patientDetails.vaccinations.map((vaccine, i) => {
       if (index === i) {
         return { ...vaccine, [name]: value };
       }
       return vaccine;
     });
 
-    setPatientDetails({ ...patientDetails, gettingVaccinated });
+    setPatientDetails({ ...patientDetails, vaccinations });
   };
-
-
-
 
   return (
     <div className="patient-details-container">
       <div className="patient-details">
         {!patientId && <h1>Add New Member</h1>}
         <h2>Member Details</h2>
-        
+
         <div className="inputs-container">
-       
           <Input
             onChange={handleFieldChange}
             name="taz"
@@ -199,23 +116,22 @@ function checkId(d) {
             placeholder="ID"
             value={patientDetails.taz}
             disabled={!!patientId}
-         
           />
           <Input
             onChange={handleFieldChange}
-            name="memberFirstName"
+            name="firstName"
             label="First Name"
             type="text"
             placeholder="First Name"
-            value={patientDetails.memberFirstName}
+            value={patientDetails.firstName}
           />
           <Input
             onChange={handleFieldChange}
-            name="memberLastName"
+            name="lastName"
             label="Last Name"
             type="text"
             placeholder="Last Name"
-            value={patientDetails.memberLastName}
+            value={patientDetails.lastName}
           />
           <Input
             onChange={handleFieldChange}
@@ -235,33 +151,33 @@ function checkId(d) {
           />
           <Input
             onChange={handleFieldChange}
-            name="memberPhone"
+            name="phone"
             label="Phone"
             type="text"
             placeholder="Phone"
-            value={patientDetails.memberPhone}
+            value={patientDetails.phone}
           />
           <Input
             onChange={handleFieldChange}
-            name="memberMobilePhone"
+            name="mobilePhone"
             label="Mobile Phone"
             type="text"
             placeholder="Mobile Phone"
-            value={patientDetails.memberMobilePhone}
+            value={patientDetails.mobilePhone}
           />
           <Input
             onChange={handleFieldChange}
-            name="memberDob"
+            name="dob"
             label="Date Of Birth"
             type="date"
             placeholder="Date Of Birth"
-            value={patientDetails.memberDob}
+            value={patientDetails.dob}
           />
         </div>
 
         <h2>Covid Details</h2>
         <div className="inputs-container-2">
-          {patientDetails.covidPatient ? (
+          {patientDetails.covidMember ? (
             <React.Fragment>
               <Input
                 onChange={handleCovidFieldChange}
@@ -269,7 +185,7 @@ function checkId(d) {
                 label="Covid Sick Date"
                 type="date"
                 placeholder="Covid Sick Date"
-                value={patientDetails?.covidPatient?.sickDate}
+                value={patientDetails?.covidMember?.sickDate}
               />
               <Input
                 onChange={handleCovidFieldChange}
@@ -277,7 +193,7 @@ function checkId(d) {
                 label="Covid Recovery Date"
                 type="date"
                 placeholder="Covid Recovery Date"
-                value={patientDetails?.covidPatient?.recoveryDate}
+                value={patientDetails?.covidMember?.recoveryDate}
               />
             </React.Fragment>
           ) : (
@@ -287,12 +203,9 @@ function checkId(d) {
           )}
         </div>
 
-
-
-
         <h2>Vaccines</h2>
         <div className="inputs-container-2">
-          {patientDetails.gettingVaccinated?.map((vaccine, index) => (
+          {patientDetails.vaccinations?.map((vaccine, index) => (
             <React.Fragment key={index}>
               <Input
                 onChange={(e) => handleChangeVaccine(e, index)}
@@ -313,7 +226,7 @@ function checkId(d) {
             </React.Fragment>
           ))}
 
-          {patientDetails.gettingVaccinated.length < 4 && (
+          {patientDetails.vaccinations.length < 4 && (
             <button className="add-button" onClick={handleAddVaccine}>
               Add Vaccination
             </button>
@@ -321,8 +234,6 @@ function checkId(d) {
         </div>
 
         <div className="buttons-container">
-    
-
           <button className="save-button" onClick={handleSavePatient}>
             save
           </button>
@@ -332,14 +243,8 @@ function checkId(d) {
         </div>
         {error && <p className="error-message">{error}</p>}
       </div>
-    </div>);
-
-
-
-
-
-     
-    };
-    
+    </div>
+  );
+};
 
 export default PatientDetails;

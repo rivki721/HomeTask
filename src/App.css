@@ -19,6 +19,7 @@ body {
   flex-direction: column;
   overflow-y: auto;
   gap: 10px;
+  min-width: 200px;
 }
 
 .cards-header{
