@@ -1,0 +1,69 @@
+.patient-details-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  border-radius: 0px 50px 50px 0;
+  flex-direction: column;
+  box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.2);
+  background-color: white;
+}
+
+.patient-details {
+  overflow: auto;
+  overflow-x: hidden;
+  padding: 20px;
+}
+
+.inputs-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.inputs-container-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.buttons-container {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.save-button,
+.delete-button,
+.add-button
+add_picture-button {
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  transition: all 0.2s ease-in-out;
+}
+
+.save-button:hover,
+.delete-button:hover {
+  opacity: 0.8;
+}
+
+.add-button{
+  background-color: #28a745;
+}
+
+.save-button {
+  background-color: #007bff;
+}
+.delete-button {
+  background-color: #dc3545;
+}
+
+.error-message{
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+}

@@ -1,0 +1,12 @@
+.input-label{
+  margin-bottom: 5px;
+  font-weight: 700;
+  display: block;
+}
+
+.details-input{
+  padding: 10px;
+  border-radius: 5px;
+  width: calc(100% - 20px);
+  border: 1px solid #ced4da;
+}
